@@ -141,7 +141,7 @@ def get_password(user, host):
 	sql = db_query_getpass % {"user": user}
 	logging.info("dbcursor execute: %s "  % (sql))
 	dbcursor.execute(sql)
-	data = dbcur.fetchone()
+	data = dbcursor.fetchone()
 	return data[0] if data != None else None;
 
 
@@ -168,7 +168,7 @@ def setpass(user, host, password):
 
 	database.ping()
 	dbcursor.execute(db_query_setpass % {"user": user, "host": host, "password": password_hash(password)})
-	if dbcur.rowcount > 0:
+	if dbcursor.rowcount > 0:
 		return True
 	else:
 		logging.info("No rows found for user %s@%s to update password" % (user, host))
@@ -194,7 +194,7 @@ def removeuser(user, host):
 
 	database.ping()
 	dbcursor.execute(db_query_unregister % {"user": user, "host": host})
-	if dbcur.rowcount > 0:
+	if dbcursor.rowcount > 0:
 		return True
 	else:
 		logging.debug("No rows found to remove user %s@%s" % (user, host))
