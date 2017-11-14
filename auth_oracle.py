@@ -140,7 +140,7 @@ def get_password(user, host):
 	database.ping()
 	sql = db_query_getpass % {"user": user}
 	dbcursor.execute(sql)
-	logging.debug("dbcursor.execute：%s "  % (sql))
+	logging.debug("dbcursor execute: %s "  % (sql))
 	data = dbcur.fetchone()
 	return data[0] if data != None else None;
 
