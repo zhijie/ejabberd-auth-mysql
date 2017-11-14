@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python2.7
 #
 #External auth script for ejabberd that enable auth against MySQL db with
 #use of custom fields and table. It works with hashed passwords.
