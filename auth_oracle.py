@@ -29,7 +29,7 @@ username_field = 'LOGIN_NAME'
 password_field = 'LOGIN_PASSWORD'
 
 # Get the password for a user. Use the placeholders `%(user)s`, `%(host)s`. Example: `SELECT password FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
-db_query_getpass='SELECT ' + password_field + ' FROM '+tablename+' WHERE '+username_field+' = \'%(user)s\''
+db_query_getpass='SELECT ' + password_field + ' FROM '+tablename+' WHERE '+username_field+" = '%(user)s'"
 
 # Update the password for a user. Leave empty to disable. Placeholder `%(password)s` contains the hashed password. Example: `UPDATE users SET password = %(password)s WHERE username = CONCAT(%(user)s, '@', %(host)s)`
 db_query_setpass='UPDATE '+tablename+' SET '+password_field+' = "%(password)s" WHERE '+username_field+' = \'%(user)s\''
