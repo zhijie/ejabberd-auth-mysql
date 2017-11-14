@@ -60,7 +60,7 @@ logging.basicConfig(level=logging.INFO,
 
 try:
 	database=cx_Oracle.Connection(db_user,db_pass,db_host+':'+db_port+'/'+db_sid)
-	dbcursor = connection.cursor()
+	dbcursor = database.cursor()
 except cx_Oracle.DatabaseError as exc:
 	error, = exc.args
 	print("Oracle-Error-Code:", error.code)
