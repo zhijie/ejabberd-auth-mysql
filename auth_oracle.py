@@ -17,7 +17,7 @@
 import os
 
 # DB config
-db_host='123.57.57.88'
+db_host='localhost'
 db_user='pt6'
 db_pass='cape'
 db_sid='pt6'
