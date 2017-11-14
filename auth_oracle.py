@@ -138,7 +138,7 @@ def password_hash(password, old_password=None):
 
 def get_password(user, host):
 	database.ping()
-	dbcursor.execute(db_query_getpass, {"user": user, "host": host})
+	dbcursor.execute(db_query_getpass % {"user": user})
 	data = dbcur.fetchone()
 	return data[0] if data != None else None;
 
@@ -165,7 +165,7 @@ def setpass(user, host, password):
 		return False
 
 	database.ping()
-	dbcursor.execute(db_query_setpass, {"user": user, "host": host, "password": password_hash(password)})
+	dbcursor.execute(db_query_setpass % {"user": user, "host": host, "password": password_hash(password)})
 	if dbcur.rowcount > 0:
 		return True
 	else:
@@ -182,7 +182,7 @@ def tryregister(user, host, password):
 		return False
 
 	database.ping()
-	dbcursor.execute(db_query_register, {"user": user, "host": host, "password": password_hash(password)})
+	dbcursor.execute(db_query_register % {"user": user, "host": host, "password": password_hash(password)})
 	return True
 
 
@@ -191,7 +191,7 @@ def removeuser(user, host):
 		return False
 
 	database.ping()
-	dbcursor.execute(db_query_unregister, {"user": user, "host": host})
+	dbcursor.execute(db_query_unregister % {"user": user, "host": host})
 	if dbcur.rowcount > 0:
 		return True
 	else:
