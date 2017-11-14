@@ -139,6 +139,7 @@ def password_hash(password, old_password=None):
 def get_password(user, host):
 	database.ping()
 	dbcursor.execute(db_query_getpass % {"user": user})
+	logging.debug("dbcursor.execute： "  + (db_query_getpass % {"user": user}))
 	data = dbcur.fetchone()
 	return data[0] if data != None else None;
 
