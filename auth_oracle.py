@@ -16,25 +16,33 @@
 
 import os
 import cx_Oracle
-db_host=os.environ['AUTH_MYSQL_HOST']
-db_user=os.environ['AUTH_MYSQL_USER']
-db_pass=os.environ['AUTH_MYSQL_PASSWORD']
-db_name=os.environ['AUTH_MYSQL_DATABASE']
+
+# DB config
+db_host='123.57.57.88'
+db_user='pt6'
+db_pass='cape'
+db_sid='pt6'
+db_port='1522'
+
+#table and field config
+tablename = 'SYS_USER'
+username_field = 'LOGIN_NAME'
+password_field = 'LOGIN_PASSWORD'
 
 # Get the password for a user. Use the placeholders `%(user)s`, `%(host)s`. Example: `SELECT password FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
-db_query_getpass=os.environ['AUTH_MYSQL_QUERY_GETPASS']
+db_query_getpass='SELECT ' + password_field + ' FROM '+tablename+' WHERE '+username_field+' = %(user)s'
 
 # Update the password for a user. Leave empty to disable. Placeholder `%(password)s` contains the hashed password. Example: `UPDATE users SET password = %(password)s WHERE username = CONCAT(%(user)s, '@', %(host)s)`
-db_query_setpass=os.getenv('AUTH_MYSQL_QUERY_SETPASS', '')
+db_query_setpass='UPDATE '+tablename+' SET '+password_field+' = %(password)s WHERE '+username_field+' = %(user)s'
 
 # Register a new user. Leave empty to disable. Example: `INSERT INTO users ( username, password ) VALUES ( CONCAT(%(user)s, '@', %(host)s), %(password)s )`
-db_query_register=os.getenv('AUTH_MYSQL_QUERY_REGISTER', '')
+db_query_register='INSERT INTO '+tablename+' ( '+username_field+', '+password_field+' ) VALUES ( %(user)s, %(password)s )'
 
 # Removes a user. Leave empty to disable. Example: `DELETE FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
-db_query_unregister=os.getenv('AUTH_MYSQL_QUERY_UNREGISTER', '')
+db_query_unregister='DELETE FROM '+tablename+' WHERE '+username_field+' = %(user)s'
 
 # Format of the password in the database. Default is cleartext. Options are `crypt`, `md5`, `sha1`, `sha224`, `sha256`, `sha384`, `sha512`. `crypt` is recommended.
-db_hashalg=os.getenv('AUTH_MYSQL_HASHALG', '')
+db_hashalg=''
 
 # oracle sample
 # doc ref: http://cx-oracle.readthedocs.io/en/latest/module.html
@@ -42,11 +50,11 @@ db_hashalg=os.getenv('AUTH_MYSQL_HASHALG', '')
 # 
 # import cx_Oracle
 # 
-# connection = cx_Oracle.Connection("cx_Oracle/dev@localhost/orclpdb")
+# connection = cx_Oracle.Connection("PT6/cape@123.57.57.88:1522/pt6")
 # cursor = connection.cursor()
 # 
 # try:
-#     cursor.execute("select 1 / 0 from dual")
+#     cursor.execute("select * from DB_TABLE")
 # except cx_Oracle.DatabaseError as exc:
 #     error, = exc.args
 #     print("Oracle-Error-Code:", error.code)
@@ -64,14 +72,14 @@ logging.basicConfig(level=logging.INFO,
                     filename='/var/log/ejabberd/extauth.log',
                     filemode='a')
 
-MySQLdb.paramstyle = 'pyformat'
 
 try:
-	database=MySQLdb.connect(db_host, db_user, db_pass, db_name)
-except:
-	logging.error("Unable to initialize database, check settings!")
-	time.sleep(10)
-	sys.exit(1)
+	database=cx_Oracle.Connection(db_user,db_pass,db_host+':'+db_port+'/'+db_sid)
+	dbcursor = connection.cursor()
+except cx_Oracle.DatabaseError as exc:
+	error, = exc.args
+	print("Oracle-Error-Code:", error.code)
+	print("Oracle-Error-Message:", error.message)
 
 @atexit.register
 def close_db():
@@ -144,11 +152,10 @@ def password_hash(password, old_password=None):
 
 
 def get_password(user, host):
-	database.ping(True)
-	with database as dbcur:
-		dbcur.execute(db_query_getpass, {"user": user, "host": host})
-		data = dbcur.fetchone()
-		return data[0] if data != None else None;
+	database.ping()
+	dbcursor.execute(db_query_getpass, {"user": user, "host": host})
+	data = dbcur.fetchone()
+	return data[0] if data != None else None;
 
 
 def isuser(user, host):
@@ -172,14 +179,13 @@ def setpass(user, host, password):
 	if db_query_setpass == "":
 		return False
 
-	database.ping(True)
-	with database as dbcur:
-		dbcur.execute(db_query_setpass, {"user": user, "host": host, "password": password_hash(password)})
-		if dbcur.rowcount > 0:
-			return True
-		else:
-			logging.info("No rows found for user %s@%s to update password" % (user, host))
-			return False
+	database.ping()
+	dbcursor.execute(db_query_setpass, {"user": user, "host": host, "password": password_hash(password)})
+	if dbcur.rowcount > 0:
+		return True
+	else:
+		logging.info("No rows found for user %s@%s to update password" % (user, host))
+		return False
 
 
 def tryregister(user, host, password):
@@ -190,24 +196,22 @@ def tryregister(user, host, password):
 		logging.info("Could not register user %s@%s as it already exists." % (user, host))
 		return False
 
-	database.ping(True)
-	with database as dbcur:
-		dbcur.execute(db_query_register, {"user": user, "host": host, "password": password_hash(password)})
-		return True
+	database.ping()
+	dbcursor.execute(db_query_register, {"user": user, "host": host, "password": password_hash(password)})
+	return True
 
 
 def removeuser(user, host):
 	if db_query_unregister == "":
 		return False
 
-	database.ping(True)
-	with database as dbcur:
-		dbcur.execute(db_query_unregister, {"user": user, "host": host})
-		if dbcur.rowcount > 0:
-			return True
-		else:
-			logging.debug("No rows found to remove user %s@%s" % (user, host))
-			return False
+	database.ping()
+	dbcursor.execute(db_query_unregister, {"user": user, "host": host})
+	if dbcur.rowcount > 0:
+		return True
+	else:
+		logging.debug("No rows found to remove user %s@%s" % (user, host))
+		return False
 
 
 def removeuser3(user, host, password):
