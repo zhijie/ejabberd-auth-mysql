@@ -242,7 +242,7 @@ while True:
 		elif ejab_request[0] == "removeuser3":
 			op_result = removeuser3(ejab_request[1], ejab_request[2], ejab_request[3])
 	except Exception:
-		logging.	("Exception occured")
+		logging.exception("Exception occured")
 
 	ejabberd_out(op_result)
 	logging.debug("successful" if op_result else "unsuccessful")
