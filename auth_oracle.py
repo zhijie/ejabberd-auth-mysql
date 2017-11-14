@@ -52,12 +52,11 @@ db_hashalg=''
 
 import sys, logging, struct, hashlib, crypt, random, atexit, time, cx_Oracle
 
-sys.stderr = open('/var/log/ejabberd/extauth_err.log', 'a')
+sys.stderr = open('/usr/local/var/log/ejabberd/extauth_err.log', 'a')
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(message)s',
-                    filename='/var/log/ejabberd/extauth.log',
+                    filename='/usr/local/var/log/ejabberd/extauth.log',
                     filemode='a')
-
 
 try:
 	database=cx_Oracle.Connection(db_user,db_pass,db_host+':'+db_port+'/'+db_sid)
