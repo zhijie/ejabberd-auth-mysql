@@ -29,16 +29,16 @@ username_field = 'LOGIN_NAME'
 password_field = 'LOGIN_PASSWORD'
 
 # Get the password for a user. Use the placeholders `%(user)s`, `%(host)s`. Example: `SELECT password FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
-db_query_getpass='SELECT ' + password_field + ' FROM '+tablename+' WHERE '+username_field+' = "%(user)s"'
+db_query_getpass='SELECT ' + password_field + ' FROM '+tablename+' WHERE '+username_field+' = \'%(user)s\''
 
 # Update the password for a user. Leave empty to disable. Placeholder `%(password)s` contains the hashed password. Example: `UPDATE users SET password = %(password)s WHERE username = CONCAT(%(user)s, '@', %(host)s)`
-db_query_setpass='UPDATE '+tablename+' SET '+password_field+' = "%(password)s" WHERE '+username_field+' = "%(user)s"'
+db_query_setpass='UPDATE '+tablename+' SET '+password_field+' = "%(password)s" WHERE '+username_field+' = \'%(user)s\''
 
 # Register a new user. Leave empty to disable. Example: `INSERT INTO users ( username, password ) VALUES ( CONCAT(%(user)s, '@', %(host)s), %(password)s )`
-db_query_register='INSERT INTO '+tablename+' ( '+username_field+', '+password_field+' ) VALUES ( "%(user)s", "%(password)s" )'
+db_query_register='INSERT INTO '+tablename+' ( '+username_field+', '+password_field+' ) VALUES ( \'%(user)s\', \'%(password)s\' )'
 
 # Removes a user. Leave empty to disable. Example: `DELETE FROM users WHERE username = CONCAT(%(user)s, '@', %(host)s)`
-db_query_unregister='DELETE FROM '+tablename+' WHERE '+username_field+' = "%(user)s"'
+db_query_unregister='DELETE FROM '+tablename+' WHERE '+username_field+' = \'%(user)s\''
 
 # Format of the password in the database. Default is cleartext. Options are `crypt`, `md5`, `sha1`, `sha224`, `sha256`, `sha384`, `sha512`. `crypt` is recommended.
 db_hashalg=''
@@ -242,7 +242,7 @@ while True:
 		elif ejab_request[0] == "removeuser3":
 			op_result = removeuser3(ejab_request[1], ejab_request[2], ejab_request[3])
 	except Exception:
-		logging.exception("Exception occured")
+		logging.	("Exception occured")
 
 	ejabberd_out(op_result)
 	logging.debug("successful" if op_result else "unsuccessful")
