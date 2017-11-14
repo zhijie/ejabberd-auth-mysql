@@ -15,7 +15,6 @@
 ########################################################################
 
 import os
-import cx_Oracle
 
 # DB config
 db_host='123.57.57.88'
@@ -46,25 +45,12 @@ db_hashalg=''
 
 # oracle sample
 # doc ref: http://cx-oracle.readthedocs.io/en/latest/module.html
-# from __future__ import print_function
-# 
-# import cx_Oracle
-# 
-# connection = cx_Oracle.Connection("PT6/cape@123.57.57.88:1522/pt6")
-# cursor = connection.cursor()
-# 
-# try:
-#     cursor.execute("select * from DB_TABLE")
-# except cx_Oracle.DatabaseError as exc:
-#     error, = exc.args
-#     print("Oracle-Error-Code:", error.code)
-#     print("Oracle-Error-Message:", error.message)
 
 ########################################################################
 #Setup
 ########################################################################
 
-import sys, logging, struct, hashlib, MySQLdb, crypt, random, atexit, time
+import sys, logging, struct, hashlib, crypt, random, atexit, time, cx_Oracle
 
 sys.stderr = open('/var/log/ejabberd/extauth_err.log', 'a')
 logging.basicConfig(level=logging.INFO,
